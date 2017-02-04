@@ -10,7 +10,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  */
 @Configuration
 @EnableWebMvc
-@ComponentScan({"com.courses.*" })
+@ComponentScan("com.courses.mvc")
 public class AppConfig extends WebMvcConfigurerAdapter {
 
 }

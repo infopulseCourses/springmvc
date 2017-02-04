@@ -188,7 +188,7 @@
                     <username>tomcat</username>
                     <password>qwerty</password>
                     <httpsPort>442</httpsPort>
-                    <path>/auth</path>
+                    <path>/</path>
                 </configuration>
             </plugin>
 
