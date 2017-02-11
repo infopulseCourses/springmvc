@@ -6,11 +6,9 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 /**
- * @author Stepan
+ * Created by vedmant on 2/4/17.
  */
 @Configuration
 @EnableWebMvc
-@ComponentScan("com.courses.mvc")
-public class AppConfig extends WebMvcConfigurerAdapter {
-
-}
+@ComponentScan("com.courses.mvc.*")
+public class AppConfig extends WebMvcConfigurerAdapter {}

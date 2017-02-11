@@ -18,11 +18,11 @@ import javax.persistence.OneToOne;
 import java.util.List;
 
 /**
- * @author Stepan
+ * Created by vedmant on 2/11/17.
  */
+@Entity(name = "users")
 @Getter
 @Setter
-@Entity(name = "chat_users")
 public class User {
 
     @Id
@@ -36,17 +36,17 @@ public class User {
 
     private String password;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     private UserRole role;
+
+    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    @JoinTable(name = "messages", inverseJoinColumns = @JoinColumn(name = "sender_id"))
+    private List<Message> sentMessages;
 
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     @JoinTable(name = "messages", inverseJoinColumns = @JoinColumn(name = "receiver_id"))
     private List<Message> receivedMessages;
 
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true,cascade = CascadeType.ALL)
-    @JoinTable(name = "messages", inverseJoinColumns = @JoinColumn(name = "sender_id"))
-    private List<Message> sentMessages;
-
     @OneToOne(cascade = CascadeType.ALL)
-    BlackList blackList;
+    private BlackList blackList;
 }

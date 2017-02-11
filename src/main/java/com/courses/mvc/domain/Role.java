@@ -1,9 +1,9 @@
 package com.courses.mvc.domain;
 
 /**
- * @author Stepan
+ * Created by vedmant on 2/11/17.
  */
 public enum Role {
+    USER,
     ADMIN,
-    USER;
 }

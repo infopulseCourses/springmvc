@@ -18,12 +18,12 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 /**
- * @author Stepan
+ * Created by vedmant on 2/4/17.
  */
 @Configuration
 @EnableTransactionManagement
 @PropertySource("classpath:hibernate.properties")
-@EnableJpaRepositories("com.courses.mvc.repository")
+@EnableJpaRepositories("com.courses.mvc.repository.*")
 public class DBConfig {
 
     //    DB properties:
@@ -37,8 +37,7 @@ public class DBConfig {
     private static final String PROP_HIBERNATE_SHOW_SQL = "db.hibernate.show_sql";
     private static final String PROP_HIBERNATE_HBM2DDL_AUTO = "db.hibernate.hbm2ddl.auto";
     private static final String PROP_HIBERNATE_CONNECTION_CHARSET = "db.hibernate.connection.CharSet";
-    private static final String PROP_HIBERNATE_CONNECTION_CHARACTERENCODING =
-            "db.hibernate.connection.characterEncoding";
+    private static final String PROP_HIBERNATE_CONNECTION_CHARACTERENCODING = "db.hibernate.connection.characterEncoding";
     private static final String PROP_HIBERNATE_CONNECTION_USEUNICODE = "db.hibernate.connection.useUnicode";
 
     //    EntityManager Configuration:
@@ -60,7 +59,6 @@ public class DBConfig {
 
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-
         LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
         entityManagerFactoryBean.setDataSource(dataSource());
         entityManagerFactoryBean.setPersistenceProviderClass(HibernatePersistenceProvider.class);
@@ -81,13 +79,25 @@ public class DBConfig {
     private Properties getHibernateProperties() {
         Properties properties = new Properties();
 
-        properties.put(PROP_HIBERNATE_DIALECT, env.getRequiredProperty(PROP_HIBERNATE_DIALECT));
-        properties.put(PROP_HIBERNATE_SHOW_SQL, env.getRequiredProperty(PROP_HIBERNATE_SHOW_SQL));
-        properties.put(PROP_HIBERNATE_HBM2DDL_AUTO, env.getRequiredProperty(PROP_HIBERNATE_HBM2DDL_AUTO));
-        properties.put(PROP_HIBERNATE_CONNECTION_CHARSET, env.getRequiredProperty(PROP_HIBERNATE_CONNECTION_CHARSET));
-        properties.put(PROP_HIBERNATE_CONNECTION_CHARACTERENCODING,
+//        properties.put("hibernate.connection.driver_class", "db.driver");
+//        properties.put("hibernate.connection.username", "postgres");
+//        properties.put("hibernate.connection.password", "root");
+//        properties.put("hibernate.connection.url", "jdbc:postgresql://localhost/webchat");
+
+//        properties.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQL95Dialect");
+//        properties.put("hibernate.show_sql", "true");
+//        properties.put("hibernate.hbm2ddl.auto", "update");
+//        properties.put("hibernate.connection.CharSet", "utf8");
+//        properties.put("hibernate.connection.characterEncoding", "utf8");
+//        properties.put("hibernate.connection.useUnicode", "true");
+
+        properties.put("hibernate.dialect", env.getRequiredProperty(PROP_HIBERNATE_DIALECT));
+        properties.put("hibernate.show_sql", env.getRequiredProperty(PROP_HIBERNATE_SHOW_SQL));
+        properties.put("hibernate.hbm2ddl.auto", env.getRequiredProperty(PROP_HIBERNATE_HBM2DDL_AUTO));
+        properties.put("hibernate.connection.CharSet", env.getRequiredProperty(PROP_HIBERNATE_CONNECTION_CHARSET));
+        properties.put("hibernate.connection.characterEncoding",
                 env.getRequiredProperty(PROP_HIBERNATE_CONNECTION_CHARACTERENCODING));
-        properties.put(PROP_HIBERNATE_CONNECTION_USEUNICODE,
+        properties.put("hibernate.connection.useUnicode",
                 env.getRequiredProperty(PROP_HIBERNATE_CONNECTION_USEUNICODE));
 
         return properties;

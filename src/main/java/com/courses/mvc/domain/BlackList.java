@@ -11,11 +11,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
 /**
- * @author Stepan
+ * Created by vedmant on 2/11/17.
  */
+@Entity(name = "black_list")
 @Getter
 @Setter
-@Entity(name = "black_list")
 public class BlackList {
 
     @Id
@@ -24,5 +24,5 @@ public class BlackList {
 
     @OneToOne
     @JoinColumn(name = "user_id")
-    User user;
+    private User user;
 }
