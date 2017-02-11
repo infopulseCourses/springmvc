@@ -10,8 +10,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -39,14 +37,12 @@ public class User {
     @ManyToOne(fetch = FetchType.EAGER)
     private UserRole role;
 
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-    @JoinTable(name = "messages", inverseJoinColumns = @JoinColumn(name = "sender_id"))
+    @OneToMany(mappedBy = "sender",fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Message> sentMessages;
 
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-    @JoinTable(name = "messages", inverseJoinColumns = @JoinColumn(name = "receiver_id"))
+    @OneToMany(mappedBy = "receiver",fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Message> receivedMessages;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
     private BlackList blackList;
 }

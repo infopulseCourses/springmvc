@@ -12,13 +12,13 @@ public class JSPConfig {
 
     @Bean
     public InternalResourceViewResolver getViewResolver() {
-        System.out.println("getViewResolver");
-
         InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
-        viewResolver.setPrefix("/WEB-INF/views/");
+        viewResolver.setPrefix("/WEB-INF/jsp/");
         viewResolver.setSuffix(".jsp");
 
         return viewResolver;
     }
+
+
 
 }
