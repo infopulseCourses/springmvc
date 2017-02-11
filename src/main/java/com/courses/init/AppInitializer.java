@@ -17,8 +17,7 @@ public class AppInitializer implements WebApplicationInitializer{
 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
-        System.out.println(" onStartup");
-
+        System.out.println("!!!INITIALIZE");
         WebApplicationContext context = getContext();
 
         servletContext.addListener(new ContextLoaderListener(context));

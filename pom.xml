@@ -8,6 +8,7 @@
     <artifactId>spring-mvc</artifactId>
     <version>1.0</version>
     <packaging>war</packaging>
+
     <properties>
         <failOnMissingWebXml>false</failOnMissingWebXml>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
@@ -18,6 +19,12 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.12.4</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-web-api</artifactId>
