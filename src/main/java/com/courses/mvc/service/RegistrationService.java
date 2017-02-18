@@ -10,8 +10,9 @@ import com.courses.mvc.repository.UserRoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 
 /**
  * @author Stepan
@@ -25,9 +26,9 @@ public class RegistrationService {
     @Autowired
     UserRoleRepository userRoleRepository;
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class )
     public void createUser(UserDTO newUser) {
-        try{
+        try {
             UserRole userRole = new UserRole();
             userRole.setRole(Role.USER);
             userRoleRepository.save(userRole);
@@ -35,8 +36,8 @@ public class RegistrationService {
             User user = convertUserDTOToUser(newUser);
             user.setRole(userRole);
             userRepository.save(user);
-        }catch (JpaSystemException e){
-            throw new UserServiceException();
+        } catch (JpaSystemException e) {
+            throw new UserServiceException("User already exist");
         }
     }
 
