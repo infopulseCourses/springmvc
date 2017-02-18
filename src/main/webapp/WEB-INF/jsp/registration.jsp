@@ -9,7 +9,7 @@
 <body>
 <h2>Registration</h2>
 
-${requestScope.alreadyexist}
+${alreadyexist}
 <sf:form modelAttribute="user" action="${formHandler}">
     <fieldset>
 

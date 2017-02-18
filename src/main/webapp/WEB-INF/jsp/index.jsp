@@ -8,5 +8,6 @@
 <a href="${s:mvcUrl('getLogin').build()}">Login</a>
 <br/>
 <a href="${s:mvcUrl('getRegistration').build()}">Registration</a>
+${errorMessage}
 </body>
 </html>

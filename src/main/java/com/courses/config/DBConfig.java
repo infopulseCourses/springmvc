@@ -23,7 +23,7 @@ import java.util.Properties;
 @Configuration
 @EnableTransactionManagement
 @PropertySource("classpath:hibernate.properties")
-@EnableJpaRepositories("com.courses.mvc.repository.*")
+@EnableJpaRepositories("com.courses.mvc.repository")
 public class DBConfig {
 
     //    DB properties:
@@ -91,11 +91,4 @@ public class DBConfig {
         return properties;
     }
 
-    @Bean
-    public MessageSource messageSource() {
-        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-        messageSource.setBasenames("reg", "app");
-        messageSource.setDefaultEncoding("UTF-8");
-        return messageSource;
-    }
 }

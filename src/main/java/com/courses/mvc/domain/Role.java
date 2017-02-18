@@ -5,5 +5,5 @@ package com.courses.mvc.domain;
  */
 public enum Role {
     USER,
-    ADMIN,
+    ADMIN
 }

@@ -13,11 +13,10 @@ import javax.servlet.ServletRegistration;
 /**
  * @author Stepan
  */
-public class AppInitializer implements WebApplicationInitializer{
+public class AppInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
-        System.out.println("!!!INITIALIZE");
         WebApplicationContext context = getContext();
 
         servletContext.addListener(new ContextLoaderListener(context));
@@ -25,7 +24,7 @@ public class AppInitializer implements WebApplicationInitializer{
                 .addServlet("DispatcherServlet", new DispatcherServlet(context));
         dispatcher.setLoadOnStartup(1);
         dispatcher.addMapping("/");
-}
+    }
 
     private AnnotationConfigWebApplicationContext getContext() {
         AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
