@@ -7,6 +7,7 @@ import com.courses.mvc.dto.UserDTO;
 import com.courses.mvc.exception.UserServiceException;
 import com.courses.mvc.repository.UserRepository;
 import com.courses.mvc.repository.UserRoleRepository;
+import com.courses.mvc.service.util.UserConverterUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.stereotype.Service;
@@ -33,20 +34,12 @@ public class RegistrationService {
             userRole.setRole(Role.USER);
             userRoleRepository.save(userRole);
 
-            User user = convertUserDTOToUser(newUser);
+            User user = UserConverterUtil.convertUserDTOToUser(newUser);
             user.setRole(userRole);
             userRepository.save(user);
         } catch (JpaSystemException e) {
             throw new UserServiceException("User already exist");
         }
-    }
-
-    private User convertUserDTOToUser(UserDTO newUser) {
-        User u = new User();
-        u.setName(newUser.getName());
-        u.setLogin(newUser.getLogin());
-        u.setPassword(newUser.getPassword());
-        return u;
     }
 
 }

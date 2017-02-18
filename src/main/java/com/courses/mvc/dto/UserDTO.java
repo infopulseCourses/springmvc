@@ -1,5 +1,6 @@
 package com.courses.mvc.dto;
 
+import com.courses.mvc.domain.Role;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,5 +23,7 @@ public class UserDTO {
 
     @NotNull
     private String password;
+
+    private Role role;
 
 }
