@@ -38,6 +38,7 @@ public class LoginController {
             session.setAttribute("errorMessage", "User doesn't exist");
             return "redirect:login";
         }
+        session.setAttribute("user", userDTO);
         if (userDTO.getRole() == Role.ADMIN) {
             return "redirect:admin";
         }

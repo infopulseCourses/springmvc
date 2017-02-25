@@ -5,12 +5,11 @@
 <html>
 <head>
     <title>Registration</title>
-    <jsp:include page="styles.jsp"/>
 </head>
 <body>
 <h3 class="text-danger">${requestScope.errorMessage}</h3>
 <div class="container">
-    <sf:form modelAttribute="user" cssClass="form-signin" action="${formHandler}">
+    <sf:form modelAttribute="user" cssClass="form-signin">
         <h2 class="form-signin-heading">Registration</h2>
         <div>
             <label for="name" class="text-muted"><s:message code="reg.username"/></label>

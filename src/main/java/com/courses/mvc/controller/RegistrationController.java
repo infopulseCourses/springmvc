@@ -23,7 +23,6 @@ public class RegistrationController {
     public ModelAndView getRegistration(@ModelAttribute("user") @Validated UserDTO user) {
 
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject("formHandler", "/registration");
         modelAndView.setViewName("registration");
 
         return modelAndView;
