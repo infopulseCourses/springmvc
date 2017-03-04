@@ -55,22 +55,24 @@ public class GsonTest {
 
     @Test
     public void testKeyValue() {
-        String json = "[{'sessionId':'55','auth':'no'}]";
+        String json = "{'sessionId':'55'}";
 
-        Type listType = new TypeToken<ArrayList<HashMap<String, String>>>() {
+        Type listType = new TypeToken<HashMap<String, String>>() {
         }.getType();
 
         Gson gson = new Gson();
 
-        ArrayList<Map<String, String>> myList = gson.fromJson(json, listType);
+       Map<String, String> myList = gson.fromJson(json, listType);
 
-        for (Map<String, String> m : myList) {
+       System.out.println(myList.keySet().iterator().next());
+       System.out.println(myList.values().iterator().next());
+       /* for (Map<String, String> m : myList) {
 
             assertEquals(m.get("sessionId"), "55");
-            assertEquals(m.get("auth"), "no");
+           // assertEquals(m.get("auth"), "no");
             System.out.println(m.get("sessionId"));
-            System.out.println(m.get("auth"));
-        }
+            //System.out.println(m.get("auth"));
+        }*/
     }
 
     @Test

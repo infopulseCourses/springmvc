@@ -8,6 +8,10 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
@@ -35,17 +39,18 @@ public class ChatSocketController extends TextWebSocketHandler {
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         Gson gson = new Gson();
-        Type jsontType = new TypeToken<ArrayList<HashMap<String, String>>>() {
-        }.getType();
-        ArrayList<Map<String, String>> myList = gson.fromJson(message.getPayload(), jsontType);
-        Map.Entry<String, String> entry = myList.get(0).entrySet().iterator().next();
-        String key = entry.getKey();
-        String value = entry.getValue();
+        System.out.println("Payload : "+message.getPayload());
+        Type jsontType = new TypeToken<HashMap<String, String>>(){}.getType();
+        Map<String, String> stringMap = gson.fromJson(message.getPayload(), jsontType);
+
+        String key = stringMap.keySet().iterator().next();
+        String value = stringMap.values().iterator().next();
+        System.out.println("Key : " + key);
         if (key == null) {
             session.sendMessage(new TextMessage("Bad"));
             return;
         }
-        if (key.equals("sessionID")) {
+        if (key.equals("sessionId")) {
             UserDTO user = chatService.authUser(value);
             authUser(session, user);
             return;
@@ -58,7 +63,7 @@ public class ChatSocketController extends TextWebSocketHandler {
             case "list":
                 JsonObject list = new JsonObject();
                 list.add("list", gson.toJsonTree(clientsOnline.keySet()));
-                session.sendMessage(new TextMessage(list.getAsString()));
+                session.sendMessage(new TextMessage(gson.toJson(list)));
                 break;
             case "broadcast":
                 sendMessage(session, false, value, null);
@@ -75,6 +80,7 @@ public class ChatSocketController extends TextWebSocketHandler {
     }
 
     private void sendMessage(WebSocketSession session, boolean isPrivate, String message, String receiver) throws IOException {
+        Gson gson = new Gson();
         String sender = clientsOnline.entrySet().stream()
                 .filter(item -> item.getValue() == session)
                 .findFirst()
@@ -87,7 +93,7 @@ public class ChatSocketController extends TextWebSocketHandler {
                 privateMessage.addProperty("name", sender);
                 privateMessage.addProperty("message", message);
 
-                clientsOnline.get(receiver).sendMessage(new TextMessage(privateMessage.getAsString()));
+                clientsOnline.get(receiver).sendMessage(new TextMessage(gson.toJson(privateMessage)));
             } else
                 chatService.saveMessage(message, sender, receiver);
         } else {
@@ -99,7 +105,7 @@ public class ChatSocketController extends TextWebSocketHandler {
 
           //  jedis.lpush("broadcast", broadcastMessage.getAsString());
             for (WebSocketSession socketSession : clientsOnline.values()) {
-                socketSession.sendMessage(new TextMessage(broadcastMessage.getAsString()));
+                socketSession.sendMessage(new TextMessage(gson.toJson(broadcastMessage)));
             }
         }
     }
@@ -107,7 +113,7 @@ public class ChatSocketController extends TextWebSocketHandler {
     private void authUser(WebSocketSession session, UserDTO user) throws IOException {
         Gson gson = new Gson();
         if (user != null) {
-            session.sendMessage(new TextMessage("{'auth':'yes'}"));
+            session.sendMessage(new TextMessage("{\"auth\":\"yes\"}"));
             clientsOnline.put(user.getLogin(), session);
             List<Message> messages = chatService.getAllMessagesByUserLogin(user.getLogin());
 
@@ -119,14 +125,14 @@ public class ChatSocketController extends TextWebSocketHandler {
                 }
             });
 
-            List<Message> broadcastMessages = redisService.getBroadcastMessages();
+        /*    List<Message> broadcastMessages = redisService.getBroadcastMessages();
             broadcastMessages.forEach(broadcastMessage -> {
                 try {
                     session.sendMessage(new TextMessage(gson.toJson(broadcastMessage, Message.class)));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            });
+            });*/
 
         } else {
             session.sendMessage(new TextMessage("{'auth':'no'}"));

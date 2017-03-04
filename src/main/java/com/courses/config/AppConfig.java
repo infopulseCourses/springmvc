@@ -1,6 +1,9 @@
 package com.courses.config;
 
+import com.courses.mvc.controller.ChatSocketController;
 import com.courses.mvc.interceptor.ControllerInterceptor;
+import com.courses.mvc.service.ChatService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;

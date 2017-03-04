@@ -4,7 +4,7 @@ app.controller('web-chat-controller', function ($scope) {
         $scope.users = users;
     };
     $scope.selectUser = function (user) {
-        document.getElementById('inputMessage').value = user + ' : ';
+        document.getElementById('inputMessage').value = user + ':';
     }
 });
 
@@ -20,6 +20,7 @@ socket.onclose = function (event) {
         console.log('close clean');
     }
     else {
+        console.log(event);
         console.log('close error');
     }
 };
@@ -30,7 +31,7 @@ socket.onerror = function (event) {
 socket.onmessage = function (event) {
     var message = JSON.parse(event.data);
     if (typeof message.list !== 'undefined') {
-        var myScope = angular.element(document.getElementById('web-chat-id'));
+        var myScope = angular.element(document.getElementById('web-chat-id')).scope();
         myScope.$apply(function () {
             myScope.applyUsers(message.list);
         });
@@ -46,16 +47,25 @@ socket.onmessage = function (event) {
     }
 };
 function sendList() {
-    socket.send(JSON.stringify({"list":""})) ;
+    socket.send(JSON.stringify({"list":""}));
 }
 function send() {
     var message = document.getElementById('inputMessage').value;
     var arrayMessage = message.split(':');
     var data = {};
     data[arrayMessage[0]] = arrayMessage[1];
+    alert(data);
     socket.send(JSON.stringify(data));
 }
 
 function registerUser() {
+    var sessionId = getCookie('JSESSIONID');
+    socket.send(JSON.stringify({sessionId: sessionId}));
+}
 
+function getCookie(name) {
+    var matches = document.cookie.match(new RegExp(
+        "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+    ));
+    return matches ? decodeURIComponent(matches[1]) : undefined;
 }

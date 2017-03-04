@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -32,7 +35,8 @@ public class LoginController {
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public String login(@RequestParam(value = "login") String login,
-                        @RequestParam(value = "password") String password, HttpSession session) {
+                        @RequestParam(value = "password") String password, HttpSession session,
+                        HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         UserDTO userDTO = loginService.verifyLogin(login, password);
         if (userDTO == null) {
             session.setAttribute("errorMessage", "User doesn't exist");
@@ -42,7 +46,14 @@ public class LoginController {
         if (userDTO.getRole() == Role.ADMIN) {
             return "redirect:admin";
         }
-        session.setAttribute("sockPath","/sock");
+        Cookie[] cookies = servletRequest.getCookies();
+        for (Cookie cookie : cookies) {
+           if(cookie.getName().equals("JSESSIONID")){
+               cookie.setHttpOnly(false);
+               servletResponse.addCookie(cookie);
+           }
+        }
+        session.setAttribute("sockPath", "/sock");
         return "redirect:chat";
     }
 }

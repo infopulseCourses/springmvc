@@ -7,6 +7,7 @@ import com.courses.mvc.listener.HttpSessionListenerImpl;
 import com.courses.mvc.repository.MessageRepository;
 import com.courses.mvc.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
@@ -16,21 +17,22 @@ import java.util.List;
  * @author Stepan
  */
 @Service
+@Qualifier("chatService")
 public class ChatService {
 
     @Autowired
-    MessageRepository repository;
+    MessageRepository messageRepository;
 
     @Autowired
     UserRepository userRepository;
 
     public UserDTO authUser(String sessionId){
-        HttpSession httpSession = HttpSessionListenerImpl.getSessionById(sessionId);
+       HttpSession httpSession = HttpSessionListenerImpl.getSessionById(sessionId);
        return (UserDTO) httpSession.getAttribute("user");
     }
 
     public List<Message> getAllMessagesByUserLogin(String login) {
-        return repository.getAllMessagesByReceiverLogin(login);
+        return messageRepository.getAllMessagesByReceiverLogin(login);
     }
 
     public void saveMessage(String message, String sender, String receiver) {
@@ -41,6 +43,6 @@ public class ChatService {
         newMessage.setReceiver(receiverUser);
         newMessage.setSender(senderUser);
 
-        repository.save(newMessage);
+        messageRepository.save(newMessage);
     }
 }
