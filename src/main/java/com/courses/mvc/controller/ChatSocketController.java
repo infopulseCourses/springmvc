@@ -1,7 +1,6 @@
 package com.courses.mvc.controller;
 
 import com.courses.mvc.domain.Message;
-import com.courses.mvc.domain.User;
 import com.courses.mvc.dto.UserDTO;
 import com.courses.mvc.service.ChatService;
 import com.courses.mvc.service.RedisService;
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
-import redis.clients.jedis.Jedis;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -37,33 +35,46 @@ public class ChatSocketController extends TextWebSocketHandler {
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         Gson gson = new Gson();
-        Type jsontType = new TypeToken<ArrayList<HashMap<String, String>>>() {}.getType();
+        Type jsontType = new TypeToken<ArrayList<HashMap<String, String>>>() {
+        }.getType();
         ArrayList<Map<String, String>> myList = gson.fromJson(message.getPayload(), jsontType);
         Map.Entry<String, String> entry = myList.get(0).entrySet().iterator().next();
         String key = entry.getKey();
         String value = entry.getValue();
-        if (key == null)
+        if (key == null) {
             session.sendMessage(new TextMessage("Bad"));
-        else
-            switch (key) {
-                case "sessionId":
-                    UserDTO user = chatService.authUser(value);
-                    authUser(session, user);
-                    break;
-                case "list":
-                    session.sendMessage(new TextMessage(gson.toJson(clientsOnline.keySet())));
-                    break;
-                case "broadcast":
-                    sendMessage(session, false, value, null);
-                    break;
-                default:
-                    WebSocketSession socketSession = clientsOnline.get(key);
-                    sendMessage(socketSession, true, value, key);
-                    break;
-            }
+            return;
+        }
+        if (key.equals("sessionID")) {
+            UserDTO user = chatService.authUser(value);
+            authUser(session, user);
+            return;
+        }
+        if (!isAuthorized(session)) {
+            session.sendMessage(new TextMessage("Bad"));
+            return;
+        }
+        switch (key) {
+            case "list":
+                JsonObject list = new JsonObject();
+                list.add("list", gson.toJsonTree(clientsOnline.keySet()));
+                session.sendMessage(new TextMessage(list.getAsString()));
+                break;
+            case "broadcast":
+                sendMessage(session, false, value, null);
+                break;
+            default:
+                WebSocketSession socketSession = clientsOnline.get(key);
+                sendMessage(socketSession, true, value, key);
+                break;
+        }
     }
 
-    private void sendMessage(WebSocketSession session, boolean isPrivate, String message, String receiver) {
+    private boolean isAuthorized(WebSocketSession session) {
+        return clientsOnline.values().contains(session);
+    }
+
+    private void sendMessage(WebSocketSession session, boolean isPrivate, String message, String receiver) throws IOException {
         String sender = clientsOnline.entrySet().stream()
                 .filter(item -> item.getValue() == session)
                 .findFirst()
@@ -75,23 +86,21 @@ public class ChatSocketController extends TextWebSocketHandler {
                 JsonObject privateMessage = new JsonObject();
                 privateMessage.addProperty("name", sender);
                 privateMessage.addProperty("message", message);
+
+                clientsOnline.get(receiver).sendMessage(new TextMessage(privateMessage.getAsString()));
             } else
                 chatService.saveMessage(message, sender, receiver);
         } else {
             JsonObject broadcastMessage = new JsonObject();
+            broadcastMessage.addProperty("name", sender);
             broadcastMessage.addProperty("message", message);
-            broadcastMessage.addProperty("sender", sender);
 
-            Jedis jedis = redisService.getJedis();
+           // Jedis jedis = redisService.getJedis();
 
-            jedis.lpush("broadcast", broadcastMessage.getAsString());
-            clientsOnline.entrySet().forEach(clientOnline -> {
-                try {
-                    clientOnline.getValue().sendMessage(new TextMessage(broadcastMessage.getAsString()));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
+          //  jedis.lpush("broadcast", broadcastMessage.getAsString());
+            for (WebSocketSession socketSession : clientsOnline.values()) {
+                socketSession.sendMessage(new TextMessage(broadcastMessage.getAsString()));
+            }
         }
     }
 

@@ -42,6 +42,7 @@ public class LoginController {
         if (userDTO.getRole() == Role.ADMIN) {
             return "redirect:admin";
         }
+        session.setAttribute("sockPath","/sock");
         return "redirect:chat";
     }
 }

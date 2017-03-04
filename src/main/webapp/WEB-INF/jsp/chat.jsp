@@ -1,16 +1,31 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: Stepan
-  Date: 18.02.2017
-  Time: 19:04
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
     <title>Chat</title>
+    <jsp:include page="styles.jsp"/>
+    <jsp:include page="scripts.jsp"/>
 </head>
+
 <body>
 <h2>Chat</h2>
+<div class="container">
+    <form>
+        <div ng-app="web-chat" ng-controller="web-chat-controller" id="web-chat-id">
+            <ul class="list-group">
+                <li class="list-group-item" ng-repeat="user in users" ng-click="selectUser(user)">{{user}}</li>
+            </ul>
+        </div>
+
+        <br>
+        <label for="output-message">Chat</label>
+        <textarea class="form-control" id="output-message"></textarea>
+        <br>
+
+        <label for="inputMessage">Message</label>
+        <input type="text" id="inputMessage"/>
+        <input type="button" class="btn btn-default" onclick="send()" value="Send"/>
+    </form>
+</div>
+
 </body>
 </html>
