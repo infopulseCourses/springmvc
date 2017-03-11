@@ -69,8 +69,7 @@ public class ChatSocketController extends TextWebSocketHandler {
                 sendMessage(session, false, value, null);
                 break;
             default:
-                WebSocketSession socketSession = clientsOnline.get(key);
-                sendMessage(socketSession, true, value, key);
+                sendMessage(session, true, value, key);
                 break;
         }
     }
