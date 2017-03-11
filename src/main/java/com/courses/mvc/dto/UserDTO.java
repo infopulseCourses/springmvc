@@ -14,6 +14,8 @@ import javax.validation.constraints.Pattern;
 @Setter
 public class UserDTO {
 
+    private Long id;
+
     @NotNull
     @Pattern(regexp = "\\w{3,}", message = "Name incorrect")
     private String name;
@@ -23,6 +25,8 @@ public class UserDTO {
 
     @NotNull
     private String password;
+
+    private boolean isBanned;
 
     private Role role;
 

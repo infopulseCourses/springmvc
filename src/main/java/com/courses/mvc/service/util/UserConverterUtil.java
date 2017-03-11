@@ -22,6 +22,8 @@ public class UserConverterUtil {
         u.setLogin(newUser.getLogin());
         u.setRole(newUser.getRole().getRole());
         u.setPassword(newUser.getPassword());
+        u.setId(newUser.getId());
+
         return u;
     }
 
