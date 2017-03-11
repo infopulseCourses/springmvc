@@ -1,48 +1,50 @@
 package com.courses.mvc.service;
 
-import com.courses.mvc.domain.Message;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
 
-import java.util.Arrays;
+import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author Stepan
  */
 @Service
-//TODO implement
+@PropertySource("classpath:redis.properties")
 public class RedisService {
-    public Jedis getJedis() {
-        return null;
+
+    @Resource
+    Environment environment;
+
+    private Jedis jedis;
+
+    public synchronized Jedis getJedis() {
+        if(jedis == null) {
+            jedis = new Jedis(environment.getProperty("redis.url"));
+        }
+        return jedis;
     }
 
-    public List<ObjectNode> getAllMessages() {
+    public List<JsonObject> getBroadcastMessages(){
         List<String> messages = getJedis().lrange("broadcast", 0, -1);
-        ObjectMapper mapper = new ObjectMapper();
-        List<ObjectNode> result = messages.stream().map(message -> {
-            String[] messageArray = message.split(":");
+        List<JsonObject> jsonMessages = new ArrayList<>();
 
-            ObjectNode broadCastMessage = mapper.createObjectNode();
-            JsonNode senderNode = mapper.createObjectNode().path(messageArray[0]);
-            JsonNode messageNode = mapper.createObjectNode().path(messageArray[1]);
-            broadCastMessage.set("name", senderNode);
-            broadCastMessage.set("message", messageNode);
-            return broadCastMessage;
-        }).collect(Collectors.toList());
+        for(String message : messages){
+            JsonObject messageObject = new JsonObject();
+            messageObject.addProperty("name", message.split(":")[0]);
+            messageObject.addProperty("message", message.split(":")[1]);
+            jsonMessages.add(messageObject);
+        }
 
-        return result;
+        return jsonMessages;
     }
 
-    public List<Message> getBroadcastMessages(){
-        List<String> messages = getJedis().lrange("broadcast", 0, -1);
-        Gson gson = new Gson();
-        return  messages.stream().map(message -> gson.fromJson(message, Message.class)).collect(Collectors.toList());
+    public void addMessage(String sender, String message){
+        getJedis().lpush("broadcast",sender + ":" + message);
     }
 
 }

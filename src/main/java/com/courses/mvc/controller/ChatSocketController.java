@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
+import redis.clients.jedis.Jedis;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -39,13 +40,11 @@ public class ChatSocketController extends TextWebSocketHandler {
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         Gson gson = new Gson();
-        System.out.println("Payload : "+message.getPayload());
         Type jsontType = new TypeToken<HashMap<String, String>>(){}.getType();
         Map<String, String> stringMap = gson.fromJson(message.getPayload(), jsontType);
-
         String key = stringMap.keySet().iterator().next();
         String value = stringMap.values().iterator().next();
-        System.out.println("Key : " + key);
+
         if (key == null) {
             session.sendMessage(new TextMessage("Bad"));
             return;
@@ -87,22 +86,23 @@ public class ChatSocketController extends TextWebSocketHandler {
                 .getKey();
 
         if (isPrivate) {
-            if (session != null) {
+            if (clientsOnline.get(receiver) != null) {
                 JsonObject privateMessage = new JsonObject();
                 privateMessage.addProperty("name", sender);
                 privateMessage.addProperty("message", message);
 
                 clientsOnline.get(receiver).sendMessage(new TextMessage(gson.toJson(privateMessage)));
-            } else
+            } else {
+                System.out.println("save message");
                 chatService.saveMessage(message, sender, receiver);
+            }
         } else {
             JsonObject broadcastMessage = new JsonObject();
             broadcastMessage.addProperty("name", sender);
             broadcastMessage.addProperty("message", message);
 
-           // Jedis jedis = redisService.getJedis();
+            redisService.addMessage(sender,message);
 
-          //  jedis.lpush("broadcast", broadcastMessage.getAsString());
             for (WebSocketSession socketSession : clientsOnline.values()) {
                 socketSession.sendMessage(new TextMessage(gson.toJson(broadcastMessage)));
             }
@@ -124,14 +124,15 @@ public class ChatSocketController extends TextWebSocketHandler {
                 }
             });
 
-        /*    List<Message> broadcastMessages = redisService.getBroadcastMessages();
+            List<JsonObject> broadcastMessages = redisService.getBroadcastMessages();
             broadcastMessages.forEach(broadcastMessage -> {
                 try {
-                    session.sendMessage(new TextMessage(gson.toJson(broadcastMessage, Message.class)));
+
+                    session.sendMessage(new TextMessage(gson.toJson(broadcastMessage)));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            });*/
+            });
 
         } else {
             session.sendMessage(new TextMessage("{'auth':'no'}"));

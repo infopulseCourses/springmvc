@@ -43,7 +43,6 @@ socket.onmessage = function (event) {
         console.log('authorization success');
     }
     if (typeof message.name !== 'undefined') {
-        console.log(document.getElementById('output-message').value);
         document.getElementById('output-message').value = message.name + " : " + message.message + "\n" + document.getElementById('output-message').value;
     }
 };
@@ -55,9 +54,6 @@ function send() {
     var arrayMessage = message.split(':');
     var data = {};
     data[arrayMessage[0]] = arrayMessage[1];
-    console.log('key: ' + arrayMessage[0]);
-    console.log('value : ' + arrayMessage[1]);
-    alert(data);
     socket.send(JSON.stringify(data));
 }
 

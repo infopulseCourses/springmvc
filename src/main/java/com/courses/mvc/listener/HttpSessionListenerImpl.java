@@ -16,10 +16,8 @@ public class HttpSessionListenerImpl implements HttpSessionListener{
 
     @Override
     public void sessionCreated(HttpSessionEvent se) {
-        System.out.println("session created");
         HttpSession session = se.getSession();
         sessionMap.put(session.getId(),session);
-        System.out.println("ID = " + session.getId());
     }
 
     @Override
@@ -28,7 +26,6 @@ public class HttpSessionListenerImpl implements HttpSessionListener{
     }
 
     public static HttpSession getSessionById(String id){
-        System.out.println("size = "+sessionMap.size());
         return sessionMap.get(id);
     }
 }
