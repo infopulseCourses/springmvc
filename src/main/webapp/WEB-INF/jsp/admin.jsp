@@ -7,7 +7,8 @@
     <script src="/static/app/js/admin.js"></script>
 </head>
 <body>
-<h2>Admin</h2>
+<div class="page-header">
+    <h1 style="text-align: center">Banned users</h1>
 <div class="container" id="allUsersId">
     <script>
         getUsers("${sessionScope.linkToAdminPage}");
