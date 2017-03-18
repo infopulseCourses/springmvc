@@ -1,9 +1,9 @@
 package com.courses.mvc.aspect;
 
-import com.courses.mvc.exception.AccessDeniedException;
-import com.courses.mvc.exception.LoginException;
-import com.courses.mvc.exception.NoSessionException;
-import com.courses.mvc.exception.UserServiceException;
+import com.courses.mvc.dto.GeneralResponseDTO;
+import com.courses.mvc.exception.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -42,6 +42,13 @@ public class UserExceptionAdvice {
             session.setAttribute("error","Login exception");
 
         return modelAndView;
+    }
+
+    @ExceptionHandler(value = RestException.class)
+    public ResponseEntity<GeneralResponseDTO> getRestError(){
+        GeneralResponseDTO fail = new GeneralResponseDTO();
+        fail.operationFailed();
+        return new ResponseEntity<>(fail, HttpStatus.OK);
     }
 
 }

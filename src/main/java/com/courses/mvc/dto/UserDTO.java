@@ -16,14 +16,14 @@ public class UserDTO {
 
     private Long id;
 
-    @NotNull
-    @Pattern(regexp = "\\w{3,}", message = "Name incorrect")
+  // @NotNull
+   // @Pattern(regexp = "\\w{3,}", message = "Name incorrect")
     private String name;
 
-    @NotNull
+   // @NotNull
     private String login;
 
-    @NotNull
+  //  @NotNull
     private String password;
 
     private boolean isBanned;
