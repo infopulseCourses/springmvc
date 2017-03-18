@@ -44,6 +44,7 @@ public class LoginController {
         }
         session.setAttribute("user", userDTO);
         if (userDTO.getRole() == Role.ADMIN) {
+            session.setAttribute("linkToAdminPage","/users");
             return "redirect:admin";
         }
         Cookie[] cookies = servletRequest.getCookies();

@@ -38,6 +38,7 @@ public class AdminRestController {
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<ResponseUserDTO> getAllUsers() {
         AccessUtil.verifyUserRole(Role.ADMIN);
+
         List<UserDTO> users = userService.getAllUsersExceptAdmins();
         List<UserResourceSupport> userResourceSupports = new ArrayList<>();
 
