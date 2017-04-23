@@ -7,6 +7,7 @@
 <body>
 <div class="page-header">
     <h1 style="text-align: center">Banned users</h1>
+</div>
 <div class="container" id="allUsersId">
     <script>
         getUsers("${sessionScope.linkToAdminPage}");
